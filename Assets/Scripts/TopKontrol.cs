@@ -95,7 +95,7 @@ public class TopKontrol : MonoBehaviour
             Destroy(collision.gameObject);
 
             Instantiate(halka, new Vector3(transform.position.x, transform.position.y + 8f, transform.position.z), Quaternion.identity);
-            Instantiate(renkTekeri, new Vector3(transform.position.x, transform.position.y + 13f, transform.position.z), Quaternion.identity);
+            Instantiate(renkTekeri, new Vector3(transform.position.x, transform.position.y + 11.5f, transform.position.z), Quaternion.identity);
         }
     }
     void RastgeleRenkBelirle()
