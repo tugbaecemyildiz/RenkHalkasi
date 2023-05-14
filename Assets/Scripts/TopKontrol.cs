@@ -16,10 +16,13 @@ public class TopKontrol : MonoBehaviour
     public Color turkuaz, sari, pembe, mor;
 
     [SerializeField] Text scoreText;
+    [SerializeField] Text highScoreText;
     public static int score = 0;
+    int highScore;
 
     public GameObject halka, renkTekeri;
-
+    public static bool isStart = false;
+    
 
     private void Awake()
     {
@@ -27,11 +30,25 @@ public class TopKontrol : MonoBehaviour
     }
     private void Start()
     {
+        highScore = PlayerPrefs.GetInt("highScore");
+        highScoreText.text = "High Score: " + highScore;
         scoreText.text = "Score: " + score;
         RastgeleRenkBelirle();
+        Time.timeScale= 0f;
+        isStart = false;
+
     }
     private void Update()
     {
+        if (Input.GetMouseButtonDown(0) && !isStart)
+        {
+            isStart= true;
+            Time.timeScale = 1f;
+        }
+        if (!isStart) 
+        {
+            return;
+        }
         if (Input.GetMouseButtonDown(0))
         {
             basildiMi = true;
@@ -43,12 +60,15 @@ public class TopKontrol : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        if (!isStart)
+        {
+            return;
+        }
         if (basildiMi)
         {
             rb.velocity = Vector2.up * ziplamaKuvveti;
 
         }
-        
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -58,10 +78,15 @@ public class TopKontrol : MonoBehaviour
             Destroy(collision.gameObject);
             return;
         }
-        if (collision.tag !=mevcutRenk && collision.tag != "PuanArttirici" && collision.tag != "RenkTekeri")
+        if ((collision.tag !=mevcutRenk && collision.tag != "PuanArttirici" && collision.tag != "RenkTekeri") || collision.CompareTag("Death"))
         {
+            if (score > highScore)
+            {
+                PlayerPrefs.SetInt("highScore", score);
+            }
             score = 0; //Eğer can sistemi yapılacaksa burası can sayısına entegre edilmeli. Yapılmayacaksa puan scoredaki statik kaldırılabilir.
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            
         }
         if (collision.tag == "PuanArttirici")
         {
@@ -70,7 +95,7 @@ public class TopKontrol : MonoBehaviour
             Destroy(collision.gameObject);
 
             Instantiate(halka, new Vector3(transform.position.x, transform.position.y + 8f, transform.position.z), Quaternion.identity);
-            Instantiate(renkTekeri, new Vector3(transform.position.x, transform.position.y + 8f, transform.position.z), Quaternion.identity);
+            Instantiate(renkTekeri, new Vector3(transform.position.x, transform.position.y + 13f, transform.position.z), Quaternion.identity);
         }
     }
     void RastgeleRenkBelirle()
